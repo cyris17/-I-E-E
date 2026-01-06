@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ᑭIᑕᗩ EᑎᕼᗩᑎᑕE</title>
+    
+    <script src="https://unpkg.com/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://unpkg.com/@upscalerjs/default-model@latest/dist/umd/index.min.js"></script>
+    <script src="https://unpkg.com/upscaler@latest/dist/browser/umd/upscaler.min.js"></script>
+
+    <style>
+        /* --- THEME --- */
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), url('bg.jpg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+
+        /* --- HEADER & BUTTONS --- */
+        .header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 90%; max-width: 420px; margin-top: 20px;
+        }
+        h1 {
+            margin: 0; font-size: 1.3rem; text-transform: uppercase;
+            letter-spacing: 2px; font-weight: 800;
+            background: linear-gradient(90deg, #fff, #00f2ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .support-btn {
+            background: rgba(255, 0, 80, 0.2); border: 1px solid #ff0050;
+            color: #ff0050; padding: 8px 15px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: bold; cursor: pointer;
+        }
+
+        .container { width: 90%; max-width: 420px; margin-top: 20px; padding-bottom: 120px; }
+
+        /* --- SUPPORT MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+        }
+        .modal-box {
+            width: 85%; max-width: 340px; background: #111;
+            border: 1px solid #333; border-radius: 20px; padding: 25px;
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,1);
+        }
+        .pay-option {
+            background: #222; border-radius: 12px; padding: 15px;
+            margin-bottom: 15px; border: 1px solid #333; transition: 0.3s;
+        }
+        .pay-option:hover { border-color: #00f2ff; }
+        .pay-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; display: block; }
+        .pay-desc { font-size: 0.75rem; color: #888; display: block; margin-bottom: 10px; }
+        
+        .m-btn {
+            display: inline-block; width: 100%; padding: 10px; border-radius: 8px;
+            text-decoration: none; font-weight: bold; font-size: 0.9rem; margin-top: 5px;
+        }
+        .btn-upi { background: #fff; color: #000; }
+        .btn-bmc { background: #ffdd00; color: #000; }
+
+        /* --- UI COMPONENTS --- */
+        .ram-badge { background: rgba(0, 242, 255, 0.1); border: 1px solid #00f2ff; color: #00f2ff; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; }
+        .settings-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        select { background: #222; color: #fff; border: 1px solid #444; padding: 5px; border-radius: 5px; }
+        .glass-box { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 40px 20px; text-align: center; }
+        #loading-ui { display: none; margin-top: 20px; }
+        .track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00f2ff, #0077ff); }
+        #studio-ui { display: none; }
+        .canvas-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        #mainCanvas { width: 100%; display: block; }
+        .controls-panel { background: rgba(0,0,0,0.6); border-radius: 16px; padding: 20px; margin-top: 20px; }
+        .btn { width: 100%; padding: 16px; margin-top: 15px; border: none; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .btn-dl { background: #00f2ff; color: #000; }
+        .btn-reset { background: rgba(255,255,255,0.1); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="supportModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="margin-top:0;">Support My Work ❤️</h2>
+            
+            <div class="pay-option">
+                <span class="pay-title">Local Support (UPI)</span>
+                <span class="pay-desc">Direct GPay / PhonePe / Paytm</span>
+                <a id="upiLink" href="#" class="m-btn btn-upi">Pay via UPI</a>
+            </div>
+
+            <div class="pay-option">
+                <span class="pay-title">International Support</span>
+                <span class="pay-desc">Support using Cards / PayPal</span>
+                <a id="bmcLink" href="#" target="_blank" class="m-btn btn-bmc">Buy Me a Coffee</a>
+            </div>
+
+            <button onclick="document.getElementById('supportModal').style.display='none'" 
+                    style="background:transparent; color:#555; border:none; margin-top:10px; cursor:pointer;">Close</button>
+        </div>
+    </div>
+
+    <div class="header-row">
+        <h1>ᑭIᑕᗩ EᑎᕼᗩᑎᑕE</h1>
+        <button class="support-btn" onclick="document.getElementById('supportModal').style.display='flex'">❤️ Support</button>
+    </div>
+
+    <div class="container">
+        <div style="text-align: center;"><div id="ramBadge" class="ram-badge">🔍 Detecting RAM...</div></div>
+        
+        <div class="settings-row">
+            <span style="font-size: 0.9rem; color: #ddd;">💎 Mode:</span>
+            <select id="qualitySel" onchange="updateQualityConfig()">
+                <option value="low">Safe (4GB)</option>
+                <option value="med">Balanced (6-8GB)</option>
+                <option value="high">Ultra (8GB+)</option>
+            </select>
+        </div>
+
+        <div class="glass-box" id="uploadBox" onclick="document.getElementById('fileIn').click()">
+            <span style="font-size:3rem;">⚡</span>
+            <div id="statusTxt" style="font-size: 1.2rem; font-weight: bold;">Tap to Enhance</div>
+        </div>
+        <input type="file" id="fileIn" accept="image/*" style="display: none;">
+
+        <div id="loading-ui">
+            <div id="msg" style="color:#00f2ff; font-weight:bold; margin-bottom:10px;">Enhancing...</div>
+            <div class="track"><div class="fill" id="bar"></div></div>
+        </div>
+
+        <div id="studio-ui">
+            <div class="canvas-wrapper"><canvas id="mainCanvas"></canvas></div>
+            <div class="controls-panel">
+                <div class="label-row"><span>💎 Sharpness</span></div>
+                <input type="range" id="slSharp" min="0" max="100" value="50">
+                <div class="label-row"><span>🌗 Contrast</span></div>
+                <input type="range" id="slCont" min="0" max="50" value="15">
+            </div>
+            <button class="btn btn-dl" id="dlBtn">⬇️ Save Masterpiece</button>
+            <button class="btn btn-reset" onclick="location.reload()">🔄 New Project</button>
+        </div>
+    </div>
+
+    <script>
+        // --- MONETIZATION SETTINGS ---
+        const myUPI = "kezevituoshuya17@okicici"; 
+        const myName = "Cугïຣ"; 
+        const myBMC = "https://www.buymeacoffee.com/kezevituos8";
+
+        document.getElementById('upiLink').href = `upi://pay?pa=${myUPI}&pn=${myName}&cu=INR`;
+        document.getElementById('bmcLink').href = myBMC;
+
+        // --- CORE AI LOGIC ---
+        let upscaler, baseImage = null;
+        let maxInputSize = 800, patchSize = 64;
+
+        async function init() {
+            const ram = navigator.deviceMemory || 4;
+            document.getElementById('ramBadge').innerText = `⚡ RAM Detected: ~${ram}GB`;
+            try {
+                await tf.setBackend('webgl');
+                upscaler = new Upscaler({ model: DefaultUpscalerJSModel });
+                document.getElementById('statusTxt').innerText = "Select Photo";
+            } catch (e) { console.log(e); }
+        }
+        init();
+
+        function updateQualityConfig() {
+            const mode = document.getElementById('qualitySel').value;
+            if (mode === "low") { maxInputSize = 800; patchSize = 64; }
+            else if (mode === "med") { maxInputSize = 1200; patchSize = 64; }
+            else if (mode === "high") { maxInputSize = 1800; patchSize = 128; }
+        }
+
+        function applyFilters() {
+            if(!baseImage) return;
+            const cvs = document.getElementById('mainCanvas'), ctx = cvs.getContext('2d');
+            const sharp = document.getElementById('slSharp').value / 100;
+            const contrast = parseInt(document.getElementById('slCont').value);
+            cvs.width = baseImage.width; cvs.height = baseImage.height;
+            ctx.drawImage(baseImage, 0, 0);
+            const imgData = ctx.getImageData(0, 0, cvs.width, cvs.height), d = imgData.data, w = cvs.width;
+            const cFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+            const copy = new Uint8ClampedArray(d);
+            for (let i = 0; i < d.length; i += 4) {
+                let r = copy[i], g = copy[i+1], b = copy[i+2];
+                if (sharp > 0) {
+                    const row = Math.floor((i/4)/w), col = (i/4)%w;
+                    if (row>0 && row<cvs.height-1 && col>0 && col<w-1) {
+                        const offU = i - w*4, offD = i + w*4;
+                        r = r*(1-sharp) + (5*r - copy[offU] - copy[offD] - copy[i-4] - copy[i+4])*sharp;
+                        g = g*(1-sharp) + (5*g - copy[offU+1] - copy[offD+1] - copy[i-3] - copy[i+5])*sharp;
+                        b = b*(1-sharp) + (5*b - copy[offU+2] - copy[offD+2] - copy[i-2] - copy[i+6])*sharp;
+                    }
+                }
+                d[i] = cFactor*(r-128)+128; d[i+1] = cFactor*(g-128)+128; d[i+2] = cFactor*(b-128)+128;
+            }
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        document.getElementById('slSharp').addEventListener('input', applyFilters);
+        document.getElementById('slCont').addEventListener('input', applyFilters);
+
+        document.getElementById('fileIn').addEventListener('change', async (e) => {
+            const file = e.target.files[0]; if(!file) return;
+            document.getElementById('uploadBox').style.display = 'none';
+            document.getElementById('loading-ui').style.display = 'block';
+            try {
+                const img = new Image(); img.src = URL.createObjectURL(file);
+                await new Promise(r => img.onload = r);
+                const c = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if(w > maxInputSize) { h *= maxInputSize/w; w=maxInputSize; }
+                c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img,0,0,w,h);
+                const aiResult = await upscaler.upscale(c.toDataURL(), {
+                    patchSize, padding: 2, onProgress: p => document.getElementById('bar').style.width = Math.round(p*100)+"%"
+                });
+                baseImage = new Image(); baseImage.src = aiResult;
+                baseImage.onload = () => {
+                    document.getElementById('loading-ui').style.display = 'none';
+                    document.getElementById('studio-ui').style.display = 'block';
+                    applyFilters();
+                };
+            } catch(err) { alert(err.message); location.reload(); }
+        });
+
+        document.getElementById('dlBtn').onclick = () => {
+            document.getElementById('mainCanvas').toBlob(blob => {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob); a.download = `Pica_${Date.now()}.jpg`;
+                a.click();
+            }, 'image/jpeg', 0.95);
+        };
+    </script>
+</body>
+</html>
