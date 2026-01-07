@@ -11,7 +11,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* PICA ULTIMATE v18.0 - Showcase Edition */
+        /* PICA ULTIMATE v19.0 - New Payment ID Integrated */
 
         :root {
             --primary: #00f2ff;
@@ -167,7 +167,7 @@
             object-fit: cover;
         }
 
-        /* The "Before" Side (Left) - Artificial Blur */
+        /* The "Before" Side (Left) */
         .side-before { border-right: 2px solid var(--primary); }
         .side-before .showcase-img { filter: blur(3px) contrast(80%); transform: scale(1.05); }
 
@@ -435,11 +435,16 @@
             <div id="qrDisplay"></div>
 
             <button onclick="toggleModal(false)" style="background: transparent; border: none; color: #fff; margin-top: 20px; text-decoration: underline; cursor: pointer;">Close</button>
+            
+            <div class="copy-text" onclick="copyUPI()" id="upiText" style="margin-top:20px; opacity:0.6; font-size:0.7rem;">
+                UPI ID: bendanglemla87@okicici
+            </div>
         </div>
     </div>
 
     <script>
-        const UPI_ID = "kezevituoshuya17@okicici";
+        // UPDATED UPI ID FROM YOUR QR IMAGE
+        const UPI_ID = "bendanglemla87@okicici";
         const MESSAGES = ["Loading neural core...", "Upscaling pixels...", "Enhancing details...", "Finalizing color grade..."];
         let upscaler, resultImg;
         lucide.createIcons();
@@ -464,6 +469,7 @@
         }
 
         function handlePayment() {
+            // Using generic name to ensure broad app compatibility
             location.href = `upi://pay?pa=${UPI_ID}&pn=PicaEnhance&cu=INR`;
         }
 
@@ -473,6 +479,17 @@
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiData)}`;
             qrBox.innerHTML = `<img src="${qrUrl}" alt="Scan to Pay">`;
             qrBox.style.display = 'block';
+        }
+        
+        function copyUPI() {
+            navigator.clipboard.writeText(UPI_ID);
+            const t = document.getElementById('upiText');
+            t.innerText = "COPIED TO CLIPBOARD!";
+            t.style.color = "var(--primary)";
+            setTimeout(() => { 
+                t.innerText = "UPI ID: " + UPI_ID; 
+                t.style.color = "var(--text-mid)"; 
+            }, 2000);
         }
 
         async function init() {
