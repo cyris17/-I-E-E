@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ᑭIᑕᗩ EᑎᕼᗩᑎᑕEᗰEᑎT | Professional AI Studio</title>
+    
+    <meta name="google-site-verification" content="d2qYb8NhYICLurBJT2_S1x_8YnA4Obp7iw84Rzs8riY" />
+
+    <title>ᑭIᑕᗩ EᑎᕼᗩᑎᑕE | Free AI Photo Restorer & Upscaler</title>
+    <meta name="description" content="Professional AI Photo Enhancer running locally on your device. Upscale, unblur, and restore old photos for free using WebGL technology. No uploads, 100% private.">
+    <meta name="keywords" content="AI photo enhancer, free upscaler, fix blurry photos, Pica Enhance, restore old photos, 4k upscaler, browser AI">
+    <meta name="author" content="Pica Enhancement">
+    
+    <meta property="og:title" content="ᑭIᑕᗩ EᑎᕼᗩᑎᑕE - Professional AI Studio">
+    <meta property="og:description" content="Turn your blurry photos into 4K masterpieces instantly on your phone. Free & Private.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800">
+    <meta property="og:url" content="https://cyris17.github.io/I-E-E/">
     
     <script src="https://unpkg.com/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://unpkg.com/@upscalerjs/default-model@latest/dist/umd/index.min.js"></script>
@@ -11,7 +22,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* PICA ULTIMATE v19.0 - New Payment ID Integrated */
+        /* PICA ULTIMATE v23.0 - VERIFIED EDITION */
 
         :root {
             --primary: #00f2ff;
@@ -127,7 +138,7 @@
             animation: fadeUp 0.8s ease 0.2s backwards;
         }
 
-        /* MIKU MASCOT (FIXED POSITION) */
+        /* MIKU MASCOT */
         .miku-mascot {
             position: fixed;
             bottom: 20px; right: 20px;
@@ -142,7 +153,7 @@
             50% { transform: translateY(-10px) rotate(2deg); } 
         }
 
-        /* --- BEFORE & AFTER STATIC SHOWCASE --- */
+        /* --- BEFORE & AFTER SHOWCASE --- */
         .showcase-box {
             position: relative;
             width: 100%;
@@ -167,11 +178,8 @@
             object-fit: cover;
         }
 
-        /* The "Before" Side (Left) */
         .side-before { border-right: 2px solid var(--primary); }
         .side-before .showcase-img { filter: blur(3px) contrast(80%); transform: scale(1.05); }
-
-        /* The "After" Side (Right) */
         .side-after .showcase-img { filter: contrast(110%) saturate(110%); }
 
         .label-badge {
@@ -443,7 +451,6 @@
     </div>
 
     <script>
-        // UPDATED UPI ID FROM YOUR QR IMAGE
         const UPI_ID = "bendanglemla87@okicici";
         const MESSAGES = ["Loading neural core...", "Upscaling pixels...", "Enhancing details...", "Finalizing color grade..."];
         let upscaler, resultImg;
@@ -469,7 +476,6 @@
         }
 
         function handlePayment() {
-            // Using generic name to ensure broad app compatibility
             location.href = `upi://pay?pa=${UPI_ID}&pn=PicaEnhance&cu=INR`;
         }
 
@@ -502,7 +508,6 @@
 
         document.getElementById('fileIn').onchange = async (e) => {
             const file = e.target.files[0]; if(!file) return;
-            // Hide Showcase when uploading
             document.querySelector('.showcase-box').style.display = 'none';
             document.getElementById('uploadZone').style.display = 'none';
             document.getElementById('loadingUI').style.display = 'block';
@@ -605,3 +610,4 @@
     </script>
 </body>
 </html>
+
